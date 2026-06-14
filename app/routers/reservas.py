@@ -11,8 +11,15 @@ from app.services.validaciones import (
 
 router = APIRouter(prefix="/reservas", tags=["Reservas"])
 
-# Cargamos el estado inicial en memoria desde el archivo seed.json
-CLIENTES, PRESTADORES, SERVICIOS, RESERVAS = cargar_seed()
+
+# Llamar a la función y guardamos el diccionario contenedor en una variable
+db_memoria = cargar_seed()
+
+# Extraer cada estructura real 
+CLIENTES = db_memoria["clientes"]
+PRESTADORES = db_memoria["prestadores"]
+SERVICIOS = db_memoria["servicios"]
+RESERVAS = db_memoria["reservas"]
 
 # =========================================================================
 # ENDPOINT: CREAR NUEVA RESERVA
