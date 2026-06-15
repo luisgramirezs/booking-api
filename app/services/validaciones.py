@@ -91,7 +91,7 @@ def validar_disponibilidad(reserva: Reserva, servicio: Servicio, historial_reser
 
 def calcular_reembolso_cancelacion(reserva: Reserva, servicio: Servicio, cliente: Cliente) -> dict:
     # 1. Filtro de Catálogo: Si el servicio es NO reembolsable de origen, devuelve 0.0 de inmediato
-    if servicio.is_non_refundable:
+    if getattr(servicio, "is_non_refundable", False) is True:
         reserva.monto_reembolso = 0.0
         return {"monto_reembolso": 0.0, "porcentaje_aplicado": "0% (No Reembolsable)"}
 
@@ -116,17 +116,17 @@ def calcular_reembolso_cancelacion(reserva: Reserva, servicio: Servicio, cliente
         
         # Clientes Premium reciben 100%, Estándar reciben 50%
         if cliente.is_premium :
-            reembolso= servicio.costo_servicio
+            reembolso= reserva.total_pagado
             porcentaje = "100% (Premium)"
         else:
-            reembolso = servicio.costo_servicio / 2
+            reembolso = reserva.total_pagado / 2
             porcentaje = "50% (Estándar)"
 
     # CASO C: Entre 1 y 4 horas de anticipación
     elif timedelta(hours=1) <= diferencia < timedelta(hours=4):
         # Clientes Premium reciben 50%, Estándar reciben 0%
         if cliente.is_premium :
-            reembolso= servicio.costo_servicio / 2
+            reembolso= reserva.total_pagado / 2
             porcentaje = "50% (Premium)"
         else:
             reembolso = 0.0
